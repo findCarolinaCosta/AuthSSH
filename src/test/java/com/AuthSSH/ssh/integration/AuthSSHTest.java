@@ -29,6 +29,7 @@ import static org.mockito.ArgumentMatchers.any;
 //@ActiveProfiles("test") // for use application-test.properties with h2 database
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @ExtendWith(MockitoExtension.class)
+@DisplayName("Integration tests for Register SSH")
 public class AuthSSHTest {
 
   @Autowired
