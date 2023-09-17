@@ -4,8 +4,8 @@ import jakarta.validation.constraints.NotBlank;
 import org.antlr.v4.runtime.misc.NotNull;
 
 public record AuthenticateDTO(
-    @NotBlank @NotNull String email,
-    @NotBlank @NotNull String publicKey
+    @NotBlank(message = "email cannot be blank") @NotNull String email,
+    @NotBlank(message = "publicKey cannot be blank") @NotNull String publicKey
 ) {
 
 }
