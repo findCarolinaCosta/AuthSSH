@@ -1,14 +1,21 @@
 package com.AuthSSH.ssh.integration;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.when;
 
+import com.AuthSSH.ssh.models.SshKey;
+import com.AuthSSH.ssh.models.SshKey.SshKeyPK;
 import com.AuthSSH.ssh.models.User;
 import com.AuthSSH.ssh.repositories.SshKeyRepository;
 import com.AuthSSH.ssh.repositories.UserRepository;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -24,7 +31,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 @SpringBootTest
-@AutoConfigureMockMvc
+@AutoConfigureMockMvc(addFilters = false)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @ExtendWith(MockitoExtension.class)
 @DisplayName("Integration tests for Authenticate SSH")
@@ -39,9 +46,14 @@ public class AuthenticateSshTest {
   @MockBean
   private SshKeyRepository sshKeyRepository;
 
-  @BeforeAll
-  public void beforeAll() {
+  @BeforeEach
+  public void beforeEach() {
     configureMockUserRepository();
+  }
+
+  @AfterEach
+  public void afterEach() {
+    reset(userRepository);
   }
 
   private void configureMockUserRepository() {
@@ -50,6 +62,21 @@ public class AuthenticateSshTest {
       User user = new User();
       user.setId(UUID.randomUUID());
       user.setEmail(email);
+
+      List<SshKey> sshKeys = new ArrayList<>();
+
+      List<String> publicKeys = List.of("publicKey");
+
+      for (String publicKey : publicKeys) {
+        SshKey sshKey = new SshKey();
+        SshKeyPK sshKeyPK = new SshKeyPK();
+        sshKeyPK.setPublicKey(publicKey);
+        sshKey.setUser(user);
+        sshKey.setId(sshKeyPK);
+        sshKeys.add(sshKey);
+      }
+
+      user.setSshKeys(sshKeys);
 
       Optional<User> optionalUser = Optional.of(user);
 
@@ -104,5 +131,20 @@ public class AuthenticateSshTest {
             .content(bodyContent)
         )
         .andExpect(MockMvcResultMatchers.status().isBadRequest());
+  }
+
+  @Test
+  @DisplayName("Should return 401 when authenticate with invalid public key")
+  public void shouldReturn401WhenAuthenticateWithInvalidPublicKey() throws Exception {
+    String bodyContent = "{"
+        + " \"email\": \"email\", "
+        + "\"publicKey\": \"invalidKey\""
+        + "}";
+    mockMvc.perform(MockMvcRequestBuilders
+            .post("/AuthSSH/ssh/authenticate")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(bodyContent)
+        )
+        .andExpect(MockMvcResultMatchers.status().isUnauthorized());
   }
 }

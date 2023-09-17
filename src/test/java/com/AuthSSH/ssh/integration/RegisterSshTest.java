@@ -25,12 +25,12 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import static org.mockito.ArgumentMatchers.any;
 
 @SpringBootTest
-@AutoConfigureMockMvc
+@AutoConfigureMockMvc(addFilters = false)
 //@ActiveProfiles("test") // for use application-test.properties with h2 database
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @ExtendWith(MockitoExtension.class)
 @DisplayName("Integration tests for Register SSH")
-public class AuthSSHTest {
+public class RegisterSshTest {
 
   @Autowired
   private MockMvc mockMvc;
