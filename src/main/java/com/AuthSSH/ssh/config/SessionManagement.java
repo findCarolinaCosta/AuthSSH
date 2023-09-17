@@ -1,28 +1,31 @@
 package com.AuthSSH.ssh.config;
 
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.core.Ordered;
-import org.springframework.core.annotation.Order;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.web.SecurityFilterChain;
 
-@Configuration
-@EnableWebSecurity
 public class SessionManagement {
-  @Bean
-  @Order(Ordered.HIGHEST_PRECEDENCE)
-  public SecurityFilterChain sessionManagementFilterChain(HttpSecurity http) throws Exception {
+  private HttpSecurity http;
 
-    rememberMe(http);
 
-    sessionManagement(http);
+  public SessionManagement(HttpSecurity http) throws Exception {
+    this.http = http;
 
-    return http.build();
+    sessionManagementFilterChain();
   }
 
-  private HttpSecurity rememberMe(HttpSecurity http) throws Exception {
+  public static HttpSecurity execute(HttpSecurity http) throws Exception {
+    return new SessionManagement(http).http;
+  }
+
+  private HttpSecurity sessionManagementFilterChain() throws Exception {
+
+    rememberMe();
+
+    sessionManagement();
+
+    return http;
+  }
+
+  private HttpSecurity rememberMe() throws Exception {
     return http
         .rememberMe(rememberMe ->
             rememberMe
@@ -31,7 +34,7 @@ public class SessionManagement {
         );
   }
 
-  private HttpSecurity sessionManagement(HttpSecurity http) throws Exception {
+  private HttpSecurity sessionManagement() throws Exception {
     return http
         .sessionManagement(sessionManagement ->
             sessionManagement
