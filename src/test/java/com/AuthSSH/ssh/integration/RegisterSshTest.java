@@ -51,7 +51,7 @@ public class RegisterSshTest {
   private void configureMockUserRepository() {
     when(userRepository.save(any(User.class))).thenAnswer(invocation -> {
       User user = invocation.getArgument(0);
-      user.setId(UUID.randomUUID());
+      user.setUserId(UUID.randomUUID());
       return user;
     });
   }

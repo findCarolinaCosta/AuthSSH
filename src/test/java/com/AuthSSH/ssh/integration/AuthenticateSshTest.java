@@ -60,7 +60,7 @@ public class AuthenticateSshTest {
     when(userRepository.findByEmail(any(String.class))).thenAnswer(invocation -> {
       String email = invocation.getArgument(0);
       User user = new User();
-      user.setId(UUID.randomUUID());
+      user.setUserId(UUID.randomUUID());
       user.setEmail(email);
 
       List<SshKey> sshKeys = new ArrayList<>();

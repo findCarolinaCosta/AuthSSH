@@ -30,10 +30,10 @@ public class AuthService {
 
     boolean keyFound = false;
 
-    for (SshKey chaveSsh : sshKeys) {
-      String chaveSshAtual = chaveSsh.getId().getPublicKey();
+    for (SshKey sshKey : sshKeys) {
+      String currentKey = sshKey.getId().getPublicKey();
 
-      if (chaveSshAtual.equals(authenticateDTO.publicKey())) {
+      if (currentKey.equals(authenticateDTO.publicKey())) {
         keyFound = true;
         break;
       }

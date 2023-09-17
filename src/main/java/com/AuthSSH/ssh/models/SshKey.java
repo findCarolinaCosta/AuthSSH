@@ -11,9 +11,11 @@ import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.UUID;
+import lombok.Data;
 
 @Entity
 @Table(name = "SSH_key")
+@Data
 public class SshKey implements Serializable {
 
   @EmbeddedId
@@ -24,31 +26,8 @@ public class SshKey implements Serializable {
   @JoinColumn(name = "user_id")
   private User user;
 
-  public SshKeyPK getId() {
-    return id;
-  }
-
-  public void setId(SshKeyPK id) {
-    this.id = id;
-  }
-
-  @Override
-  public String toString() {
-    return "SshKey{" +
-        "id=" + id +
-        ", user=" + user +
-        '}';
-  }
-
-  public User getUser() {
-    return user;
-  }
-
-  public void setUser(User user) {
-    this.user = user;
-  }
-
   @Embeddable
+  @Data
   public static class SshKeyPK implements Serializable {
 
     @NotNull
@@ -58,29 +37,5 @@ public class SshKey implements Serializable {
     @NotNull
     @Column(name = "publicKey")
     private String publicKey;
-
-    public UUID getUserId() {
-      return userId;
-    }
-
-    public void setUserId(UUID userId) {
-      this.userId = userId;
-    }
-
-    public String getPublicKey() {
-      return publicKey;
-    }
-
-    public void setPublicKey(String publicKey) {
-      this.publicKey = publicKey;
-    }
-
-    @Override
-    public String toString() {
-      return "SshKeyPK{" +
-          "userId=" + userId +
-          ", publicKey='" + publicKey + '\'' +
-          '}';
-    }
   }
 }
