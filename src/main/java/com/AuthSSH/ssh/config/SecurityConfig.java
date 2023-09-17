@@ -8,18 +8,23 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
 
+
+
   @Bean
   @Order(Ordered.HIGHEST_PRECEDENCE)
   public SecurityFilterChain defaultFilterChain(HttpSecurity http) throws Exception {
+
+    HandlerAuthenticationAndAuthorization.execute(http);
+    SessionManagement.execute(http);
+    SecurityHandler.execute(http);
+
     http
-        // csrf protection disabled
-        .csrf(AbstractHttpConfigurer::disable);
+        .csrf(AbstractHttpConfigurer::disable); // csrf protection disabled
 
     return http.build();
   }

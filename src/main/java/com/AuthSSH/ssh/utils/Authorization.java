@@ -18,7 +18,7 @@ public class Authorization {
     http
         .authorizeHttpRequests(authorize ->
             authorize
-                .requestMatchers("/error/**").permitAll()
+                .requestMatchers("/login", "/error/**").permitAll()
                 .anyRequest().authenticated()
         );
   }

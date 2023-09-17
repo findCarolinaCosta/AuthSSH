@@ -2,26 +2,27 @@ package com.AuthSSH.ssh.config;
 
 import com.AuthSSH.ssh.utils.Authentication;
 import com.AuthSSH.ssh.utils.Authorization;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.core.Ordered;
-import org.springframework.core.annotation.Order;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.web.SecurityFilterChain;
 
-@Configuration
-@EnableWebSecurity
 public class HandlerAuthenticationAndAuthorization {
+  private HttpSecurity http;
+  public HandlerAuthenticationAndAuthorization(HttpSecurity http) throws Exception {
+    this.http = http;
 
-  @Bean
-  @Order(Ordered.HIGHEST_PRECEDENCE)
-  public SecurityFilterChain authorizationFilterChain(HttpSecurity http) throws Exception {
+    handler();
+  }
+
+  public static HttpSecurity execute(HttpSecurity http) throws Exception {
+    return new HandlerAuthenticationAndAuthorization(http).http;
+  }
+
+  public HttpSecurity handler() throws Exception {
 
     Authorization.execute(http);
 
     Authentication.execute(http);
 
-    return http.build();
+    return http;
   }
 }
