@@ -46,9 +46,13 @@ buildNumber.properties
 # JDT-specific (Eclipse Java Development Tools)
 .classpath
 
-# End of https://www.toptal.com/developers/gitignore/api/maven,java
+# IntelliJ IDEA
+*.iml
+.idea/
+.idea/
 
 /src/main/resources/application.properties
 /target/classes/
 .tool-versions
-.idea/
+
+# End of https://www.toptal.com/developers/gitignore/api/maven,java
