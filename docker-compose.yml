@@ -1,0 +1,66 @@
+version: '3'
+services:
+  postgres:
+    image: postgres:latest
+    container_name: postgres
+    env_file:
+      - ./src/main/resources/application-docker.properties
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - auth-ssh-network
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  cache:
+    image: redis:latest
+    container_name: redis-cache
+    restart: unless-stopped
+    ports:
+      - '6380:6379'
+    command: redis-server --save 20 1 --loglevel warning --protected-mode no
+    volumes:
+      - cache:/data
+    networks:
+      - auth-ssh-network
+    healthcheck:
+      test: [ "CMD", "redis-cli", "ping" ]
+      timeout: 10s
+      retries: 5
+
+  authssh-api:
+    build:
+      context: .
+    container_name: authssh-api
+    restart: on-failure
+    environment:
+      - spring.profiles.active=docker,dev
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./:/app
+    depends_on:
+        cache:
+          condition: service_healthy
+        postgres:
+          condition: service_healthy
+    networks:
+      - auth-ssh-network
+    healthcheck:
+      test: [ "CMD", "lsof", "-t", "-i:8080" ]
+      timeout: 10s
+      retries: 5
+
+volumes:
+  postgres_data:
+
+  cache:
+    driver: local
+
+networks:
+  auth-ssh-network:
